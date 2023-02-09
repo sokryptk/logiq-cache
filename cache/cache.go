@@ -47,10 +47,11 @@ func (c *Cache) debugLogf(format string, a ...any) {
 
 // Takes place for newer objects
 // Old objects remain unaltered
-func (c *Cache) SetTTL(duration time.Duration) {
+func (c *Cache) SetExpiration(duration time.Duration) {
 	c.expiration = duration
 }
 
+// Values() retrieves back all values currently in Cache.
 func (c *Cache) Values() map[string]*Object {
 	return c.objects
 }
@@ -68,6 +69,7 @@ func (c *Cache) Retrieve(key string) (value any, err error) {
 	return result.Value, nil
 }
 
+// Stores the object while being under capacity.
 func (c *Cache) Store(key string, value any) {
 	if len(c.objects) >= c.capacity {
 		c.removeLeastVisited()
@@ -83,6 +85,8 @@ func (c *Cache) Store(key string, value any) {
 	c.debugLogf("Stored key : %s with value : %v", key, value)
 }
 
+// Delete the object at key.
+// If the key doesn't exist, it is a no-op.
 func (c *Cache) Delete(key string) bool {
 	c.mutex.Lock()
 	delete(c.objects, key)
@@ -101,6 +105,8 @@ func (c *Cache) cleanup() {
 			for k, v := range c.objects {
 				if v.Expiration < time.Now().Unix() {
 					c.debugLogf("Cleaning up key : %s", k)
+
+					// No need of using c.Delete() since we're already locking through mutex
 					delete(c.objects, k)
 				}
 			}
@@ -110,6 +116,7 @@ func (c *Cache) cleanup() {
 }
 
 func (c *Cache) removeLeastVisited() {
+	// Highest number
 	leastVisited := 2 << 31
 	var leastVisitedKey string
 

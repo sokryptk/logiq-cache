@@ -4,14 +4,15 @@ Optimised for concurrency
 
 ### Benchmarks
 ```
-go test -bench=.
+┌──[krypton] as k in ~/GolandProjects/logiq-cache on main
+└──▶ go test -bench=.
 goos: linux
 goarch: amd64
 pkg: logiq.ai/cache
-BenchmarkCache-8   	  503358	      4329 ns/op
-
+cpu: Intel(R) Core(TM) i5-9300H CPU @ 2.40GHz
+BenchmarkCache-8   	  456414	      3527 ns/op
 PASS
-ok  	logiq.ai/cache	2.274s
+ok  	logiq.ai/cache	1.707s
 ```
 
 ### Tests
